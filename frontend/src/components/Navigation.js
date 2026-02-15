@@ -1,38 +1,67 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import { FaHome, FaProjectDiagram, FaUsers, FaBoxes, FaChartBar } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { FaHome, FaProjectDiagram, FaUsers, FaBoxes, FaChartBar, FaBars, FaTimes } from 'react-icons/fa';
+import './Navigation.css';
 
 function Navigation() {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          <FaHome className="me-2" />
+    <nav className="navbar">
+      <div className="nav-container">
+        <Link to="/dashboard" className="nav-brand">
+          <FaHome className="brand-icon" />
           Construction Management
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            <Nav.Link as={Link} to="/">
-              <FaHome className="me-1" /> Dashboard
-            </Nav.Link>
-            <Nav.Link as={Link} to="/projects">
-              <FaProjectDiagram className="me-1" /> Projects
-            </Nav.Link>
-            <Nav.Link as={Link} to="/workers">
-              <FaUsers className="me-1" /> Workers
-            </Nav.Link>
-            <Nav.Link as={Link} to="/materials">
-              <FaBoxes className="me-1" /> Materials
-            </Nav.Link>
-            <Nav.Link as={Link} to="/reports">
-              <FaChartBar className="me-1" /> Reports
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+        </Link>
+
+        <button className="nav-toggle" onClick={toggleMenu}>
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
+        <div className={`nav-menu ${isOpen ? 'active' : ''}`}>
+          <Link 
+            to="/dashboard" 
+            className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaHome className="nav-icon" /> Dashboard
+          </Link>
+          <Link 
+            to="/projects" 
+            className={`nav-link ${isActive('/projects') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaProjectDiagram className="nav-icon" /> Projects
+          </Link>
+          <Link 
+            to="/workers" 
+            className={`nav-link ${isActive('/workers') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaUsers className="nav-icon" /> Workers
+          </Link>
+          <Link 
+            to="/materials" 
+            className={`nav-link ${isActive('/materials') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaBoxes className="nav-icon" /> Materials
+          </Link>
+          <Link 
+            to="/reports" 
+            className={`nav-link ${isActive('/reports') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            <FaChartBar className="nav-icon" /> Reports
+          </Link>
+        </div>
+      </div>
+    </nav>
   );
 }
 

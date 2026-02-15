@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col } from 'react-bootstrap';
 import { FaProjectDiagram, FaUsers, FaBoxes, FaExclamationTriangle } from 'react-icons/fa';
 import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import axios from '../api/axios';
+import './Dashboard.css';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -56,108 +56,110 @@ function Dashboard() {
         stats.projectsByStatus.completed,
         stats.projectsByStatus.delayed
       ],
-      backgroundColor: ['#0d6efd', '#198754', '#dc3545'],
+      backgroundColor: ['#1C4D8D', '#198754', '#dc3545'],
     }]
   };
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 15,
+          font: {
+            size: 12
+          }
+        }
+      }
+    }
+  };
+
   return (
-    <div>
-      <h2 className="mb-4">Dashboard</h2>
+    <div className="dashboard-container">
+      <h2 className="page-title">Dashboard</h2>
       
-      <Row className="g-4 mb-4">
-        <Col md={3}>
-          <Card className="stat-card primary">
-            <Card.Body>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 className="text-muted">Total Projects</h6>
-                  <h2>{stats.totalProjects}</h2>
-                </div>
-                <FaProjectDiagram size={40} className="text-primary" />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+      <div className="stats-grid">
+        <div className="stat-card primary">
+          <div className="stat-content">
+            <div className="stat-info">
+              <h6 className="stat-label">Total Projects</h6>
+              <h2 className="stat-value">{stats.totalProjects}</h2>
+            </div>
+            <div className="stat-icon">
+              <FaProjectDiagram />
+            </div>
+          </div>
+        </div>
 
-        <Col md={3}>
-          <Card className="stat-card success">
-            <Card.Body>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 className="text-muted">Total Workers</h6>
-                  <h2>{stats.totalWorkers}</h2>
-                </div>
-                <FaUsers size={40} className="text-success" />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+        <div className="stat-card success">
+          <div className="stat-content">
+            <div className="stat-info">
+              <h6 className="stat-label">Total Workers</h6>
+              <h2 className="stat-value">{stats.totalWorkers}</h2>
+            </div>
+            <div className="stat-icon">
+              <FaUsers />
+            </div>
+          </div>
+        </div>
 
-        <Col md={3}>
-          <Card className="stat-card warning">
-            <Card.Body>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 className="text-muted">Total Materials</h6>
-                  <h2>{stats.totalMaterials}</h2>
-                </div>
-                <FaBoxes size={40} className="text-warning" />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+        <div className="stat-card warning">
+          <div className="stat-content">
+            <div className="stat-info">
+              <h6 className="stat-label">Total Materials</h6>
+              <h2 className="stat-value">{stats.totalMaterials}</h2>
+            </div>
+            <div className="stat-icon">
+              <FaBoxes />
+            </div>
+          </div>
+        </div>
 
-        <Col md={3}>
-          <Card className="stat-card danger">
-            <Card.Body>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6 className="text-muted">Low Stock Alerts</h6>
-                  <h2>{stats.lowStockItems}</h2>
-                </div>
-                <FaExclamationTriangle size={40} className="text-danger" />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+        <div className="stat-card danger">
+          <div className="stat-content">
+            <div className="stat-info">
+              <h6 className="stat-label">Low Stock Alerts</h6>
+              <h2 className="stat-value">{stats.lowStockItems}</h2>
+            </div>
+            <div className="stat-icon">
+              <FaExclamationTriangle />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Row className="g-4">
-        <Col md={6}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Project Status Distribution</Card.Title>
-              <Pie data={pieData} />
-            </Card.Body>
-          </Card>
-        </Col>
+      <div className="charts-grid">
+        <div className="chart-card">
+          <h3 className="chart-title">Project Status Distribution</h3>
+          <div className="chart-wrapper">
+            <Pie data={pieData} options={chartOptions} />
+          </div>
+        </div>
 
-        <Col md={6}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Quick Stats</Card.Title>
-              <div className="mt-3">
-                <div className="d-flex justify-content-between mb-3">
-                  <span>Ongoing Projects:</span>
-                  <strong className="text-primary">{stats.projectsByStatus.ongoing}</strong>
-                </div>
-                <div className="d-flex justify-content-between mb-3">
-                  <span>Completed Projects:</span>
-                  <strong className="text-success">{stats.projectsByStatus.completed}</strong>
-                </div>
-                <div className="d-flex justify-content-between mb-3">
-                  <span>Delayed Projects:</span>
-                  <strong className="text-danger">{stats.projectsByStatus.delayed}</strong>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <span>Active Workers:</span>
-                  <strong>{stats.totalWorkers}</strong>
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+        <div className="chart-card">
+          <h3 className="chart-title">Quick Stats</h3>
+          <div className="quick-stats">
+            <div className="quick-stat-item">
+              <span>Ongoing Projects:</span>
+              <strong className="text-primary">{stats.projectsByStatus.ongoing}</strong>
+            </div>
+            <div className="quick-stat-item">
+              <span>Completed Projects:</span>
+              <strong className="text-success">{stats.projectsByStatus.completed}</strong>
+            </div>
+            <div className="quick-stat-item">
+              <span>Delayed Projects:</span>
+              <strong className="text-danger">{stats.projectsByStatus.delayed}</strong>
+            </div>
+            <div className="quick-stat-item">
+              <span>Active Workers:</span>
+              <strong>{stats.totalWorkers}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Modal, Form, Badge } from 'react-bootstrap';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaMapMarkerAlt, FaCalendar, FaDollarSign } from 'react-icons/fa';
 import axios from '../api/axios';
+import './Projects.css';
 
 function Projects() {
   const [projects, setProjects] = useState([]);
@@ -84,160 +84,212 @@ function Projects() {
     });
   };
 
-  const getStatusBadge = (status) => {
-    const variants = {
-      'Ongoing': 'primary',
-      'Completed': 'success',
-      'Delayed': 'danger',
-      'Planning': 'secondary'
+  const getStatusClass = (status) => {
+    const classes = {
+      'Ongoing': 'status-primary',
+      'Completed': 'status-success',
+      'Delayed': 'status-danger',
+      'Planning': 'status-secondary'
     };
-    return <Badge bg={variants[status]}>{status}</Badge>;
+    return classes[status] || 'status-secondary';
   };
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Projects</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
-          <FaPlus className="me-2" />
-          Add Project
-        </Button>
+    <div className="projects-container">
+      <div className="page-header">
+        <h2 className="page-title">Projects</h2>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <FaPlus /> Add Project
+        </button>
       </div>
 
-      <Card>
-        <Card.Body>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Start Date</th>
-                <th>Budget</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map(project => (
-                <tr key={project._id}>
-                  <td>{project.name}</td>
-                  <td>{project.location}</td>
-                  <td>{getStatusBadge(project.status)}</td>
-                  <td>{new Date(project.startDate).toLocaleDateString()}</td>
-                  <td>${project.budget.toLocaleString()}</td>
-                  <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
+      {/* Desktop Table View */}
+      <div className="table-container desktop-only">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Start Date</th>
+              <th>Budget</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map(project => (
+              <tr key={project._id}>
+                <td>{project.name}</td>
+                <td>{project.location}</td>
+                <td>
+                  <span className={`status-badge ${getStatusClass(project.status)}`}>
+                    {project.status}
+                  </span>
+                </td>
+                <td>{new Date(project.startDate).toLocaleDateString()}</td>
+                <td>${project.budget.toLocaleString()}</td>
+                <td>
+                  <div className="action-buttons">
+                    <button
+                      className="btn-icon btn-edit"
                       onClick={() => handleEdit(project)}
+                      title="Edit"
                     >
                       <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
+                    </button>
+                    <button
+                      className="btn-icon btn-delete"
                       onClick={() => handleDelete(project._id)}
+                      title="Delete"
                     >
                       <FaTrash />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingProject ? 'Edit Project' : 'Add New Project'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Project Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Location</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.location}
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Status</Form.Label>
-              <Form.Select
-                value={formData.status}
-                onChange={(e) => setFormData({...formData, status: e.target.value})}
-              >
-                <option value="Planning">Planning</option>
-                <option value="Ongoing">Ongoing</option>
-                <option value="Completed">Completed</option>
-                <option value="Delayed">Delayed</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Start Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>End Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={formData.endDate}
-                onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Budget</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.budget}
-                onChange={(e) => setFormData({...formData, budget: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
-              />
-            </Form.Group>
-
-            <div className="d-flex justify-content-end">
-              <Button variant="secondary" onClick={handleClose} className="me-2">
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit">
-                {editingProject ? 'Update' : 'Create'}
-              </Button>
+      {/* Mobile Card View */}
+      <div className="cards-container mobile-only">
+        {projects.map(project => (
+          <div key={project._id} className="project-card">
+            <div className="card-header">
+              <h3>{project.name}</h3>
+              <span className={`status-badge ${getStatusClass(project.status)}`}>
+                {project.status}
+              </span>
             </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+            <div className="card-body">
+              <div className="card-info">
+                <FaMapMarkerAlt className="info-icon" />
+                <span>{project.location}</span>
+              </div>
+              <div className="card-info">
+                <FaCalendar className="info-icon" />
+                <span>{new Date(project.startDate).toLocaleDateString()}</span>
+              </div>
+              <div className="card-info">
+                <FaDollarSign className="info-icon" />
+                <span>${project.budget.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="card-actions">
+              <button
+                className="btn btn-edit"
+                onClick={() => handleEdit(project)}
+              >
+                <FaEdit /> Edit
+              </button>
+              <button
+                className="btn btn-delete"
+                onClick={() => handleDelete(project._id)}
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={handleClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingProject ? 'Edit Project' : 'Add New Project'}</h3>
+              <button className="btn-close" onClick={handleClose}>
+                <FaTimes />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Project Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Location</label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => setFormData({...formData, location: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Status</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                >
+                  <option value="Planning">Planning</option>
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Delayed">Delayed</option>
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Budget</label>
+                <input
+                  type="number"
+                  value={formData.budget}
+                  onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                />
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingProject ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

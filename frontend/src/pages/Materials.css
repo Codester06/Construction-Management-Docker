@@ -1,0 +1,144 @@
+/* Materials Page Styles - Using Template Colors */
+
+.materials-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Alert Warning */
+.alert-warning {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(251, 191, 36, 0.2) 100%);
+  border: 2px solid var(--warning);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.alert-warning svg {
+  font-size: 1.5rem;
+  color: var(--warning);
+  flex-shrink: 0;
+}
+
+/* Material-specific card styles */
+.material-card {
+  background: var(--bg-card);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 1px solid var(--bg-dark-tertiary);
+  border-left: 4px solid var(--success);
+}
+
+.material-card.low-stock {
+  border-left-color: var(--danger);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(239, 68, 68, 0.1) 100%);
+}
+
+.material-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border-color: var(--primary-light);
+}
+
+.material-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.material-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #4988C4 0%, #1C4D8D 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.75rem;
+  flex-shrink: 0;
+}
+
+.material-info h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.material-category {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Low stock table row */
+.low-stock-row {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.low-stock-row:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .materials-container {
+    padding: 1rem;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .cards-container {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .alert-warning {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .alert-warning svg {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .materials-container {
+    padding: 0.75rem;
+  }
+
+  .material-card {
+    padding: 1rem;
+  }
+
+  .material-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .material-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .material-category {
+    font-size: 0.85rem;
+  }
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Modal, Form, Badge } from 'react-bootstrap';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaUser, FaPhone, FaBriefcase, FaDollarSign } from 'react-icons/fa';
 import axios from '../api/axios';
+import './Workers.css';
 
 function Workers() {
   const [workers, setWorkers] = useState([]);
@@ -95,171 +95,232 @@ function Workers() {
     });
   };
 
-  const getStatusBadge = (status) => {
-    const variants = {
-      'Active': 'success',
-      'Inactive': 'secondary',
-      'On Leave': 'warning'
+  const getStatusClass = (status) => {
+    const classes = {
+      'Active': 'status-success',
+      'Inactive': 'status-secondary',
+      'On Leave': 'status-warning'
     };
-    return <Badge bg={variants[status]}>{status}</Badge>;
+    return classes[status] || 'status-secondary';
   };
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Workers</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
-          <FaPlus className="me-2" />
-          Add Worker
-        </Button>
+    <div className="workers-container">
+      <div className="page-header">
+        <h2 className="page-title">Workers</h2>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <FaPlus /> Add Worker
+        </button>
       </div>
 
-      <Card>
-        <Card.Body>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Phone</th>
-                <th>Assigned Project</th>
-                <th>Salary</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {workers.map(worker => (
-                <tr key={worker._id}>
-                  <td>{worker.name}</td>
-                  <td>{worker.role}</td>
-                  <td>{worker.phone}</td>
-                  <td>{worker.assignedProject?.name || 'Not Assigned'}</td>
-                  <td>${worker.salary.toLocaleString()}</td>
-                  <td>{getStatusBadge(worker.status)}</td>
-                  <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
+      {/* Desktop Table View */}
+      <div className="table-container desktop-only">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Phone</th>
+              <th>Assigned Project</th>
+              <th>Salary</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {workers.map(worker => (
+              <tr key={worker._id}>
+                <td>{worker.name}</td>
+                <td>{worker.role}</td>
+                <td>{worker.phone}</td>
+                <td>{worker.assignedProject?.name || 'Not Assigned'}</td>
+                <td>${worker.salary.toLocaleString()}</td>
+                <td>
+                  <span className={`status-badge ${getStatusClass(worker.status)}`}>
+                    {worker.status}
+                  </span>
+                </td>
+                <td>
+                  <div className="action-buttons">
+                    <button
+                      className="btn-icon btn-edit"
                       onClick={() => handleEdit(worker)}
+                      title="Edit"
                     >
                       <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
+                    </button>
+                    <button
+                      className="btn-icon btn-delete"
                       onClick={() => handleDelete(worker._id)}
+                      title="Delete"
                     >
                       <FaTrash />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingWorker ? 'Edit Worker' : 'Add New Worker'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Role</Form.Label>
-              <Form.Select
-                value={formData.role}
-                onChange={(e) => setFormData({...formData, role: e.target.value})}
-              >
-                <option value="Engineer">Engineer</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Labor">Labor</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Carpenter">Carpenter</option>
-                <option value="Mason">Mason</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Assigned Project</Form.Label>
-              <Form.Select
-                value={formData.assignedProject}
-                onChange={(e) => setFormData({...formData, assignedProject: e.target.value})}
-              >
-                <option value="">Not Assigned</option>
-                {projects.map(project => (
-                  <option key={project._id} value={project._id}>
-                    {project.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Salary</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.salary}
-                onChange={(e) => setFormData({...formData, salary: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Status</Form.Label>
-              <Form.Select
-                value={formData.status}
-                onChange={(e) => setFormData({...formData, status: e.target.value})}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="On Leave">On Leave</option>
-              </Form.Select>
-            </Form.Group>
-
-            <div className="d-flex justify-content-end">
-              <Button variant="secondary" onClick={handleClose} className="me-2">
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit">
-                {editingWorker ? 'Update' : 'Create'}
-              </Button>
+      {/* Mobile Card View */}
+      <div className="cards-container mobile-only">
+        {workers.map(worker => (
+          <div key={worker._id} className="worker-card">
+            <div className="card-header">
+              <div className="worker-info">
+                <FaUser className="worker-avatar" />
+                <div>
+                  <h3>{worker.name}</h3>
+                  <p className="worker-role">{worker.role}</p>
+                </div>
+              </div>
+              <span className={`status-badge ${getStatusClass(worker.status)}`}>
+                {worker.status}
+              </span>
             </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+            <div className="card-body">
+              <div className="card-info">
+                <FaPhone className="info-icon" />
+                <span>{worker.phone}</span>
+              </div>
+              <div className="card-info">
+                <FaBriefcase className="info-icon" />
+                <span>{worker.assignedProject?.name || 'Not Assigned'}</span>
+              </div>
+              <div className="card-info">
+                <FaDollarSign className="info-icon" />
+                <span>${worker.salary.toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="card-actions">
+              <button
+                className="btn btn-edit"
+                onClick={() => handleEdit(worker)}
+              >
+                <FaEdit /> Edit
+              </button>
+              <button
+                className="btn btn-delete"
+                onClick={() => handleDelete(worker._id)}
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={handleClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingWorker ? 'Edit Worker' : 'Add New Worker'}</h3>
+              <button className="btn-close" onClick={handleClose}>
+                <FaTimes />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Role</label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({...formData, role: e.target.value})}
+                >
+                  <option value="Engineer">Engineer</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Labor">Labor</option>
+                  <option value="Electrician">Electrician</option>
+                  <option value="Plumber">Plumber</option>
+                  <option value="Carpenter">Carpenter</option>
+                  <option value="Mason">Mason</option>
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Assigned Project</label>
+                <select
+                  value={formData.assignedProject}
+                  onChange={(e) => setFormData({...formData, assignedProject: e.target.value})}
+                >
+                  <option value="">Not Assigned</option>
+                  {projects.map(project => (
+                    <option key={project._id} value={project._id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Salary</label>
+                  <input
+                    type="number"
+                    value={formData.salary}
+                    onChange={(e) => setFormData({...formData, salary: e.target.value})}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({...formData, status: e.target.value})}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="On Leave">On Leave</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingWorker ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

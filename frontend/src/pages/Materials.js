@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Modal, Form, Badge, Alert } from 'react-bootstrap';
-import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaTimes, FaBoxes, FaDollarSign, FaTruck, FaExclamationTriangle } from 'react-icons/fa';
 import axios from '../api/axios';
+import './Materials.css';
 
 function Materials() {
   const [materials, setMaterials] = useState([]);
@@ -91,177 +91,234 @@ function Materials() {
   const lowStockCount = materials.filter(isLowStock).length;
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Materials</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
-          <FaPlus className="me-2" />
-          Add Material
-        </Button>
+    <div className="materials-container">
+      <div className="page-header">
+        <h2 className="page-title">Materials</h2>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <FaPlus /> Add Material
+        </button>
       </div>
 
       {lowStockCount > 0 && (
-        <Alert variant="warning" className="d-flex align-items-center">
-          <FaExclamationTriangle className="me-2" />
-          <strong>{lowStockCount}</strong> material(s) are running low on stock!
-        </Alert>
+        <div className="alert-warning">
+          <FaExclamationTriangle />
+          <span><strong>{lowStockCount}</strong> material(s) are running low on stock!</span>
+        </div>
       )}
 
-      <Card>
-        <Card.Body>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-                <th>Price/Unit</th>
-                <th>Supplier</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {materials.map(material => (
-                <tr key={material._id} className={isLowStock(material) ? 'table-warning' : ''}>
-                  <td>{material.name}</td>
-                  <td>{material.category}</td>
-                  <td>{material.quantity}</td>
-                  <td>{material.unit}</td>
-                  <td>${material.pricePerUnit}</td>
-                  <td>{material.supplier || 'N/A'}</td>
-                  <td>
-                    {isLowStock(material) ? (
-                      <Badge bg="danger">Low Stock</Badge>
-                    ) : (
-                      <Badge bg="success">In Stock</Badge>
-                    )}
-                  </td>
-                  <td>
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="me-2"
+      {/* Desktop Table View */}
+      <div className="table-container desktop-only">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Price/Unit</th>
+              <th>Supplier</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {materials.map(material => (
+              <tr key={material._id} className={isLowStock(material) ? 'low-stock-row' : ''}>
+                <td>{material.name}</td>
+                <td>{material.category}</td>
+                <td>{material.quantity}</td>
+                <td>{material.unit}</td>
+                <td>${material.pricePerUnit}</td>
+                <td>{material.supplier || 'N/A'}</td>
+                <td>
+                  {isLowStock(material) ? (
+                    <span className="status-badge status-danger">Low Stock</span>
+                  ) : (
+                    <span className="status-badge status-success">In Stock</span>
+                  )}
+                </td>
+                <td>
+                  <div className="action-buttons">
+                    <button
+                      className="btn-icon btn-edit"
                       onClick={() => handleEdit(material)}
+                      title="Edit"
                     >
                       <FaEdit />
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
+                    </button>
+                    <button
+                      className="btn-icon btn-delete"
                       onClick={() => handleDelete(material._id)}
+                      title="Delete"
                     >
                       <FaTrash />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingMaterial ? 'Edit Material' : 'Add New Material'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Material Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Category</Form.Label>
-              <Form.Select
-                value={formData.category}
-                onChange={(e) => setFormData({...formData, category: e.target.value})}
-              >
-                <option value="Cement">Cement</option>
-                <option value="Steel">Steel</option>
-                <option value="Bricks">Bricks</option>
-                <option value="Sand">Sand</option>
-                <option value="Wood">Wood</option>
-                <option value="Paint">Paint</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Other">Other</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Quantity</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.quantity}
-                onChange={(e) => setFormData({...formData, quantity: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Unit</Form.Label>
-              <Form.Select
-                value={formData.unit}
-                onChange={(e) => setFormData({...formData, unit: e.target.value})}
-              >
-                <option value="kg">kg</option>
-                <option value="ton">ton</option>
-                <option value="pieces">pieces</option>
-                <option value="bags">bags</option>
-                <option value="liters">liters</option>
-                <option value="meters">meters</option>
-                <option value="sqft">sqft</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Price Per Unit</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                value={formData.pricePerUnit}
-                onChange={(e) => setFormData({...formData, pricePerUnit: e.target.value})}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Supplier</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.supplier}
-                onChange={(e) => setFormData({...formData, supplier: e.target.value})}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Low Stock Threshold</Form.Label>
-              <Form.Control
-                type="number"
-                value={formData.lowStockThreshold}
-                onChange={(e) => setFormData({...formData, lowStockThreshold: e.target.value})}
-              />
-            </Form.Group>
-
-            <div className="d-flex justify-content-end">
-              <Button variant="secondary" onClick={handleClose} className="me-2">
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit">
-                {editingMaterial ? 'Update' : 'Create'}
-              </Button>
+      {/* Mobile Card View */}
+      <div className="cards-container mobile-only">
+        {materials.map(material => (
+          <div key={material._id} className={`material-card ${isLowStock(material) ? 'low-stock' : ''}`}>
+            <div className="card-header">
+              <div className="material-info">
+                <FaBoxes className="material-icon" />
+                <div>
+                  <h3>{material.name}</h3>
+                  <p className="material-category">{material.category}</p>
+                </div>
+              </div>
+              {isLowStock(material) ? (
+                <span className="status-badge status-danger">Low Stock</span>
+              ) : (
+                <span className="status-badge status-success">In Stock</span>
+              )}
             </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
+            <div className="card-body">
+              <div className="card-info">
+                <FaBoxes className="info-icon" />
+                <span>{material.quantity} {material.unit}</span>
+              </div>
+              <div className="card-info">
+                <FaDollarSign className="info-icon" />
+                <span>${material.pricePerUnit} per {material.unit}</span>
+              </div>
+              <div className="card-info">
+                <FaTruck className="info-icon" />
+                <span>{material.supplier || 'No Supplier'}</span>
+              </div>
+            </div>
+            <div className="card-actions">
+              <button
+                className="btn btn-edit"
+                onClick={() => handleEdit(material)}
+              >
+                <FaEdit /> Edit
+              </button>
+              <button
+                className="btn btn-delete"
+                onClick={() => handleDelete(material._id)}
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={handleClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingMaterial ? 'Edit Material' : 'Add New Material'}</h3>
+              <button className="btn-close" onClick={handleClose}>
+                <FaTimes />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Material Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Category</label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                >
+                  <option value="Cement">Cement</option>
+                  <option value="Steel">Steel</option>
+                  <option value="Bricks">Bricks</option>
+                  <option value="Sand">Sand</option>
+                  <option value="Wood">Wood</option>
+                  <option value="Paint">Paint</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Quantity</label>
+                  <input
+                    type="number"
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({...formData, quantity: e.target.value})}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Unit</label>
+                  <select
+                    value={formData.unit}
+                    onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                  >
+                    <option value="kg">kg</option>
+                    <option value="ton">ton</option>
+                    <option value="pieces">pieces</option>
+                    <option value="bags">bags</option>
+                    <option value="liters">liters</option>
+                    <option value="meters">meters</option>
+                    <option value="sqft">sqft</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Price Per Unit</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.pricePerUnit}
+                  onChange={(e) => setFormData({...formData, pricePerUnit: e.target.value})}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Supplier</label>
+                <input
+                  type="text"
+                  value={formData.supplier}
+                  onChange={(e) => setFormData({...formData, supplier: e.target.value})}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Low Stock Threshold</label>
+                <input
+                  type="number"
+                  value={formData.lowStockThreshold}
+                  onChange={(e) => setFormData({...formData, lowStockThreshold: e.target.value})}
+                />
+              </div>
+
+              <div className="form-actions">
+                <button type="button" className="btn btn-secondary" onClick={handleClose}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingMaterial ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
