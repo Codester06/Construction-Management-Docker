@@ -5,36 +5,35 @@
 }
 
 :root {
-  /* Primary Colors */
-  --primary-dark: #0F2854;
-  --primary-main: #1C4D8D;
-  --primary-light: #4988C4;
-  --primary-lighter: #BDE8F5;
+  /* New Color Palette - Beige/Tan Theme */
+  --beige-lightest: #F9F8F6;
+  --beige-light: #EFE9E3;
+  --beige-medium: #D9CFC7;
+  --beige-dark: #C9B59C;
   
   /* Dark Theme Colors */
-  --bg-dark: #0a0e27;
-  --bg-dark-secondary: #151b35;
-  --bg-dark-tertiary: #1e2640;
-  --bg-card: #1a2038;
-  --bg-card-hover: #222947;
+  --bg-dark: #0a0a0a;
+  --bg-dark-secondary: #1a1a1a;
+  --bg-dark-tertiary: #2a2a2a;
+  --bg-card: #1f1f1f;
+  --bg-card-hover: #2a2a2a;
   
   /* Bright Text Colors for Dark Theme */
-  --text-primary: #f0f4f8;
-  --text-secondary: #d1dce6;
-  --text-tertiary: #a8b9cc;
-  --text-light: #8b9db3;
+  --text-primary: #F9F8F6;
+  --text-secondary: #D9CFC7;
+  --text-tertiary: #C9B59C;
+  --text-light: #a89885;
   
-  /* Bright Accent Colors */
-  --accent-blue: #60a5fa;
-  --accent-cyan: #22d3ee;
-  --accent-purple: #a78bfa;
-  --accent-pink: #f472b6;
+  /* Accent Colors */
+  --accent-primary: #C9B59C;
+  --accent-secondary: #D9CFC7;
+  --accent-tertiary: #EFE9E3;
   
-  /* Status Colors - Brighter */
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
-  --info: #60a5fa;
+  /* Status Colors - Adjusted for theme */
+  --success: #86C5A8;
+  --warning: #E8B86D;
+  --danger: #E88B7D;
+  --info: #8BA8C9;
 }
 
 body {
@@ -63,7 +62,6 @@ code {
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 p {
@@ -72,12 +70,12 @@ p {
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--accent-primary);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--accent-cyan);
+  color: var(--accent-secondary);
 }
 
 /* Common Button Styles */
@@ -98,48 +96,47 @@ button {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, var(--accent-primary), var(--beige-medium));
+  color: var(--bg-dark);
+  font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  background: linear-gradient(135deg, var(--beige-medium), var(--accent-primary));
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+  box-shadow: 0 6px 20px rgba(201, 181, 156, 0.4);
 }
 
 .btn-success {
-  background: linear-gradient(135deg, var(--success), #6ee7b7);
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, var(--success), #a8d5c3);
+  color: var(--bg-dark);
+  font-weight: 600;
 }
 
 .btn-success:hover {
-  background: linear-gradient(135deg, #6ee7b7, var(--success));
+  background: linear-gradient(135deg, #a8d5c3, var(--success));
   transform: translateY(-2px);
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, var(--danger), #fca5a5);
-  color: white;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, var(--danger), #f0aca3);
+  color: var(--bg-dark);
+  font-weight: 600;
 }
 
 .btn-danger:hover {
-  background: linear-gradient(135deg, #fca5a5, var(--danger));
+  background: linear-gradient(135deg, #f0aca3, var(--danger));
   transform: translateY(-2px);
 }
 
 .btn-warning {
-  background: linear-gradient(135deg, var(--warning), #fcd34d);
-  color: #1a1a1a;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, var(--warning), #f0cd8d);
+  color: var(--bg-dark);
   font-weight: 600;
 }
 
 .btn-warning:hover {
-  background: linear-gradient(135deg, #fcd34d, var(--warning));
+  background: linear-gradient(135deg, #f0cd8d, var(--warning));
   transform: translateY(-2px);
 }
 
@@ -158,8 +155,8 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(201, 181, 156, 0.2);
   background: var(--bg-card);
 }
 
@@ -185,8 +182,8 @@ table {
 }
 
 thead {
-  background: linear-gradient(135deg, var(--primary-main) 0%, var(--primary-dark) 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--beige-medium) 100%);
+  color: var(--bg-dark);
 }
 
 th {

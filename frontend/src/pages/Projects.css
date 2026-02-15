@@ -41,23 +41,23 @@
 }
 
 .status-primary {
-  background: linear-gradient(135deg, var(--primary-main), var(--primary-light));
-  color: white;
+  background: linear-gradient(135deg, var(--accent-primary), var(--beige-medium));
+  color: var(--bg-dark);
 }
 
 .status-success {
-  background: linear-gradient(135deg, var(--success), #34d399);
-  color: white;
+  background: linear-gradient(135deg, var(--success), #a8d5c3);
+  color: var(--bg-dark);
 }
 
 .status-danger {
-  background: linear-gradient(135deg, var(--danger), #f87171);
-  color: white;
+  background: linear-gradient(135deg, var(--danger), #f0aca3);
+  color: var(--bg-dark);
 }
 
 .status-secondary {
-  background: linear-gradient(135deg, #6b7280, #9ca3af);
-  color: white;
+  background: linear-gradient(135deg, var(--text-light), var(--text-tertiary));
+  color: var(--bg-dark);
 }
 
 /* Action Buttons */
@@ -77,19 +77,19 @@
 }
 
 .btn-edit {
-  color: #1C4D8D;
+  color: var(--accent-primary);
 }
 
 .btn-edit:hover {
-  background: rgba(28, 77, 141, 0.1);
+  background: rgba(201, 181, 156, 0.1);
 }
 
 .btn-delete {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .btn-delete:hover {
-  background: rgba(220, 53, 69, 0.1);
+  background: rgba(232, 139, 125, 0.1);
 }
 
 /* Mobile Cards */
@@ -143,7 +143,7 @@
 }
 
 .info-icon {
-  color: #1C4D8D;
+  color: var(--accent-primary);
   font-size: 1rem;
 }
 
@@ -151,7 +151,7 @@
   display: flex;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid var(--bg-dark-tertiary);
 }
 
 .card-actions .btn {
@@ -214,7 +214,7 @@
 }
 
 .btn-close:hover {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .modal-content form {
