@@ -24,7 +24,7 @@ docker-compose ps
 
 # Check backend health
 echo "🏥 Checking backend health..."
-curl -s http://localhost:5001/health | jq '.' || echo "Backend not responding yet"
+curl -s http://localhost:5001/health || echo "Backend not responding yet"
 
 # Clean up old images
 echo "🧹 Cleaning up old images..."
