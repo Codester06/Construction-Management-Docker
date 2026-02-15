@@ -1,11 +1,9 @@
-# Production docker-compose with Docker Hub images
-# Use this after pushing images to Docker Hub
-
 version: '3.8'
 
 services:
+  # MongoDB Database
   mongo:
-    image: mongo:6-alpine
+    image: mongo:7
     container_name: construction-mongo
     restart: unless-stopped
     environment:
@@ -21,12 +19,13 @@ services:
       retries: 5
       start_period: 10s
 
+  # Backend API
   backend:
     image: ${DOCKER_USERNAME}/construction-backend:latest
     container_name: construction-backend
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - NODE_ENV=production
       - PORT=5000
@@ -43,6 +42,7 @@ services:
       retries: 3
       start_period: 10s
 
+  # Frontend React App
   frontend:
     image: ${DOCKER_USERNAME}/construction-frontend:latest
     container_name: construction-frontend
@@ -50,8 +50,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - construction-network
     healthcheck:
@@ -61,10 +60,12 @@ services:
       retries: 3
       start_period: 5s
 
+# Named volumes for data persistence
 volumes:
   mongo-data:
     driver: local
 
+# Custom network for container communication
 networks:
   construction-network:
     driver: bridge

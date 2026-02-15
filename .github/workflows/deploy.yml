@@ -26,7 +26,7 @@ jobs:
       - name: Build and push Backend image
         uses: docker/build-push-action@v4
         with:
-          context: ./backend
+          context: ./construction-management/backend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/construction-backend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/construction-backend:buildcache
@@ -35,7 +35,7 @@ jobs:
       - name: Build and push Frontend image
         uses: docker/build-push-action@v4
         with:
-          context: ./frontend
+          context: ./construction-management/frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/construction-frontend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/construction-frontend:buildcache
@@ -48,9 +48,10 @@ jobs:
           username: ${{ secrets.AWS_EC2_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
           script: |
-            cd /home/ec2-user/construction-management
+            cd construction-management
             git pull origin main
-            docker-compose pull
-            docker-compose up -d --force-recreate
+            export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d --force-recreate
             docker system prune -f
             echo "Deployment completed successfully!"
