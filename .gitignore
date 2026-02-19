@@ -115,4 +115,5 @@ pnpm-lock.yaml
 # ============================================
 # All Markdown Documentation Files
 # ============================================
+*.md
 markdownFiles/
